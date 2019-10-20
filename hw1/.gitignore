@@ -1,2 +1,5 @@
 # MACOSX
 *DS*
+
+# python
+__pycache__/*
