@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+import time
 import random
 import numpy as np
 
@@ -8,55 +9,47 @@ class PLA():
             read input data from the given file path
         """
 
-        file = open(file_path, 'r')
-        raw_data = file.readlines()
-        data_num = len(raw_data)
+        with open(file_path, 'r') as file:
+            raw_data = file.readlines()
+            data_num = len(raw_data)
 
-        self.input_dimension = input_dimension
+            self.input_dimension = input_dimension
 
-        # add X0
-        self.X = np.zeros((data_num, input_dimension + 1))
-        self.Y = np.zeros((data_num, 1))
-        for ind, line in enumerate(raw_data):
-            # X0 = 1
-            self.X[ind, 0] = 1.0
+            # add X0
+            self.X = np.zeros((data_num, input_dimension + 1))
+            self.Y = np.zeros(data_num)
+            for ind, line in enumerate(raw_data):
+                # X0 = 1
+                self.X[ind, 0] = 1.0
 
-            elements = line.strip().split()
-            self.Y[ind, 0] = int(elements[-1])
-            for i in range(1, input_dimension + 1):
-                self.X[ind, i] = elements[i-1]
-        
-        file.close()
+                elements = line.strip().split()
+                self.Y[ind] = int(elements[-1])
+                for i in range(1, input_dimension + 1):
+                    self.X[ind, i] = elements[i-1]
 
-    def __run(self, learning_rate, cycle, fn):
+    def __run(self, cycle, is_exceed_max_update, update_w):
         """
             arg:
                 learning_rate: int
                 cycle: [int]
-                fn: function
+                is_exceed_max_update: func return bool
+                update_w: func([int], [int], int) return [int]
         """
-
-        if not learning_rate:
-            learning_rate = 1.0
 
         # initial w = 0
         w = np.zeros(self.input_dimension + 1)
 
         cycle_len = len(cycle)
         iteration = 0
-        while iteration < cycle_len:
+        while iteration < cycle_len and not is_exceed_max_update():
             cycle_num = cycle[iteration]
             x = self.X[cycle_num]
-            y = self.Y[cycle_num ,0]
+            y = self.Y[cycle_num]
 
             dot_value = np.dot(x.T, w)
             if self.sign(dot_value) != y:
                 # update w
-                w = w + learning_rate * y * x
-
-                # custom function
-                if fn:
-                    fn()
+                w = update_w(w, x, y)
 
                 iteration = 0
             else:
@@ -64,20 +57,22 @@ class PLA():
 
         return w
 
-    def run_naive(self, learning_rate, fn):
+    def run_naive(self, is_exceed_max_update, update_w):
         """
             naive PLA
         """
-        return self.__run(learning_rate, [i for i in range(len(self.X))], fn)
+        return self.__run([i for i in range(len(self.X))], is_exceed_max_update, update_w)
 
-    def run_with_random_cycle(self, learning_rate, fn):
+    def run_with_random_cycle(self, is_exceed_max_update, update_w):
         """
             random cycle PLA
         """
 
         x_len = len(self.X)
+        # set new seed
+        random.seed(time.time())
         random_cycle = random.sample(range(x_len), x_len)
-        return self.__run(learning_rate, random_cycle, fn)
+        return self.__run(random_cycle, is_exceed_max_update, update_w)
 
     @staticmethod
     def sign(num):
