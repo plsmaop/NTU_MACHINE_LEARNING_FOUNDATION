@@ -13,7 +13,7 @@ class Q7(Pocket):
         super(Q7, self).__init__(file_path, verify_set_path, input_dimension)
         self.__current_error_index = []
         self.__initial_error_index = []
-        self.__current_w = np.zeros(input_dimension + 1)
+        self.__best_w = np.zeros(input_dimension + 1)
         self.__current_update_times = 0
 
     @staticmethod
@@ -35,23 +35,26 @@ class Q7(Pocket):
             new_error_index = super(Q7, self).get_error_index(X, Y, new_w)
             if len(new_error_index) < len(self.__current_error_index):
                 self.__current_error_index = copy.copy(new_error_index)
-                self.__current_w = copy.copy(new_w)
+                self.__best_w = copy.copy(new_w)
 
-            # print(self.Y[rand_error_index])
-            # print(new_w, self.X[rand_error_index], self.Y[rand_error_index], self.__current_w, len(new_error_index), len(self.__current_error_index))
-            return self.__current_w
+            print(new_w, w, X[rand_error_index])
+            return new_w
 
-        self.__current_error_index = self.__initial_error_index = super(Q7, self).get_error_index(self.X, self.Y, self.__current_w)
+        # initialize error_index
+        # initial self.__best_w is 0
+        self.__initial_error_index = super(Q7, self).get_error_index(self.X, self.Y, self.__best_w)
+        self.__current_error_index = copy.copy(self.__initial_error_index)
 
-        for i in range(1):
+        for i in range(repeated_times):
             print(i)
             random.seed(time.time())
             super(Q7, self).train(is_exceed_max_update, update_w)
+            print('Round', i, ': w is', self.__best_w, 'Error Rate on trainning set is', len(self.__current_error_index) / len(self.X))
             self.__current_update_times = 0
             self.__current_error_index = copy.copy(self.__initial_error_index)
-            self.__current_w = np.zeros(self.input_dimension + 1)
+            self.__best_w = np.zeros(self.input_dimension + 1)
 
-        return self.__current_w
+        return self.__best_w
 
     def run_and_show_histogram(self, repeated_times, max_update_times):
         w = self.__run(repeated_times, max_update_times)
