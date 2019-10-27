@@ -44,7 +44,8 @@ class PLA():
 
         cycle_len = len(cycle)
         iteration = 0
-        while iteration < cycle_len and not is_exceed_max_update():
+        no_error_count = 0
+        while not is_exceed_max_update():
             cycle_num = cycle[iteration]
             x = self.X[cycle_num]
             y = self.Y[cycle_num]
@@ -53,10 +54,12 @@ class PLA():
             if self.sign(dot_value) != y:
                 # update w
                 w = update_w(w, x, y)
-
-                iteration = 0
+                no_error_count = 0
             else:
-                iteration += 1
+                iteration = (iteration + 1) % cycle_len
+                no_error_count += 1
+
+            if no_error_count == cycle_len : break
 
         return w
 

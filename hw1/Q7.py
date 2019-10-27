@@ -30,18 +30,20 @@ class Q7(PLA):
     def __run(self, repeated_times, max_update_times):
 
         def is_exceed_max_update():
-            self.__current_update_times += 1
             return self.__current_update_times > max_update_times
 
         # pocket algorithm
         def update_w(w, x, y):
+            # update
+            self.__current_update_times += 1
             new_w = w + y * x
             error_rate = self.__error_rate(self.X, self.Y, new_w)
+
+            # pocket
             if self.__current_error_rate > error_rate:
                 self.__current_error_rate = error_rate
                 self.__best_w = copy.copy(new_w)
 
-            # print(self.__best_w)
             return new_w
 
         # initialize error_rate
@@ -61,6 +63,6 @@ class Q7(PLA):
 
     def run_and_show_histogram(self, repeated_times, max_update_times):
         r = self.__run(repeated_times, max_update_times)
-        print('Q7: average number of updates:', r)
+        print('Q7: average error rate on verification set:', r)
         # plt.hist(h)
         # plt.show()
