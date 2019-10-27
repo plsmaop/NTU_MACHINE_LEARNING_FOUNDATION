@@ -1,22 +1,20 @@
 #-*- coding: utf-8 -*-
-import math
+import random
+import time
+import copy
 from functools import reduce
 import numpy as np
 import matplotlib.pyplot as plt
-from pla import PLA
+from pocket import Pocket
 
 
-class Q7(PLA):
+class Q7(Pocket):
     def __init__(self, file_path, verify_set_path, input_dimension):
-        super(Q7, self).__init__(file_path, input_dimension)
-        self.__current_w = np.zeros(self.input_dimension + 1)
-        self.__initial_error_rate = math.inf
-        self.__current_error_rate = math.inf
-        self.__total_error_rate = 0
+        super(Q7, self).__init__(file_path, verify_set_path, input_dimension)
+        self.__current_error_index = []
+        self.__initial_error_index = []
+        self.__current_w = np.zeros(input_dimension + 1)
         self.__current_update_times = 0
-
-        with open(verify_set_path, 'r') as file:
-            pass
 
     @staticmethod
     def __error_rate(X, Y, w):
@@ -24,36 +22,39 @@ class Q7(PLA):
 
     def __run(self, repeated_times, max_update_times):
 
+        self.__current_update_times = 0
         def is_exceed_max_update():
             self.__current_update_times += 1
-            return self.__current_update_times > max_update_times
+            return self.__current_update_times > max_update_times or len(self.__current_error_index) == 0
 
         # pocket algorithm
-        def update_w(w, x, y):
-            new_w = w + y * x
-            error_rate = self.__error_rate(self.X, self.Y, new_w)
-            self.__total_error_rate += error_rate
-            if self.__current_error_rate > error_rate:
-                self.__current_error_rate = error_rate
-                self.__current_w = new_w
+        def update_w(w, X, Y):
+            rand_error_index = self.__current_error_index[random.randint(0, len(self.__current_error_index) - 1)]
+            new_w = w + Y[rand_error_index] * X[rand_error_index]
 
-            print(new_w, self.__current_error_rate, self.__initial_error_rate, error_rate, self.__current_w, self.__current_update_times)
+            new_error_index = super(Q7, self).get_error_index(X, Y, new_w)
+            if len(new_error_index) < len(self.__current_error_index):
+                self.__current_error_index = copy.copy(new_error_index)
+                self.__current_w = copy.copy(new_w)
+
+            # print(self.Y[rand_error_index])
+            # print(new_w, self.X[rand_error_index], self.Y[rand_error_index], self.__current_w, len(new_error_index), len(self.__current_error_index))
             return self.__current_w
 
-        # initialize error_rate
-        self.__initial_error_rate = self.__current_error_rate = self.__error_rate(self.X, self.Y, self.__current_w)
-        
-        for i in range(repeated_times):
+        self.__current_error_index = self.__initial_error_index = super(Q7, self).get_error_index(self.X, self.Y, self.__current_w)
+
+        for i in range(1):
             print(i)
-            super(Q7, self).run_with_random_cycle(is_exceed_max_update, update_w)
+            random.seed(time.time())
+            super(Q7, self).train(is_exceed_max_update, update_w)
             self.__current_update_times = 0
-            self.__current_error_rate = self.__initial_error_rate
+            self.__current_error_index = copy.copy(self.__initial_error_index)
+            self.__current_w = np.zeros(self.input_dimension + 1)
 
-
-        return self.__total_error_rate / max_update_times
+        return self.__current_w
 
     def run_and_show_histogram(self, repeated_times, max_update_times):
-        h = self.__run(repeated_times, max_update_times)
-        print('Q7: average number of updates:', h / repeated_times)
+        w = self.__run(repeated_times, max_update_times)
+        print('Q7: average number of updates:', w)
         # plt.hist(h)
         # plt.show()

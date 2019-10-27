@@ -10,8 +10,8 @@ q7_test = 'hw1_7_test.dat'
 max_update_times = 100
 
 if __name__ == '__main__':
-    q6 = Q6(q7_data, 4)
-    q6.run_and_show_histogram(repeated_times)
+    q6 = Q6(q6_data, 4)
+    # q6.run_and_show_histogram(repeated_times)
 
     q7 = Q7(q7_data, q7_test, 4)
-    # q7.run_and_show_histogram(repeated_times, max_update_times)
+    q7.run_and_show_histogram(repeated_times, max_update_times)

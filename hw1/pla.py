@@ -9,30 +9,34 @@ class PLA():
             read input data from the given file path
         """
 
+        self.input_dimension = input_dimension
+        self.X, self.Y = self.load_data_from_file(file_path, input_dimension)
+
+    @staticmethod
+    def load_data_from_file(file_path, input_dimension):
         with open(file_path, 'r') as file:
             raw_data = file.readlines()
             data_num = len(raw_data)
 
-            self.input_dimension = input_dimension
-
             # add X0
-            self.X = np.zeros((data_num, input_dimension + 1))
-            self.Y = np.zeros(data_num)
+            X = np.zeros((data_num, input_dimension + 1))
+            Y = np.zeros(data_num)
             for ind, line in enumerate(raw_data):
                 # X0 = 1
-                self.X[ind, 0] = 1.0
+                X[ind, 0] = 1.0
 
                 elements = line.strip().split()
-                self.Y[ind] = int(elements[-1])
+                Y[ind] = int(elements[-1])
                 for i in range(1, input_dimension + 1):
-                    self.X[ind, i] = elements[i-1]
+                    X[ind, i] = elements[i-1]
 
-    def __run(self, cycle, is_exceed_max_update, update_w):
+            return X, Y
+
+    def __run(self, cycle, update_w):
         """
             arg:
                 learning_rate: int
                 cycle: [int]
-                is_exceed_max_update: func return bool
                 update_w: func([int], [int], int) return [int]
         """
 
@@ -41,7 +45,7 @@ class PLA():
 
         cycle_len = len(cycle)
         iteration = 0
-        while iteration < cycle_len and not is_exceed_max_update():
+        while iteration < cycle_len:
             cycle_num = cycle[iteration]
             x = self.X[cycle_num]
             y = self.Y[cycle_num]
@@ -57,13 +61,13 @@ class PLA():
 
         return w
 
-    def run_naive(self, is_exceed_max_update, update_w):
+    def run_naive(self, update_w):
         """
             naive PLA
         """
-        return self.__run([i for i in range(len(self.X))], is_exceed_max_update, update_w)
+        return self.__run([i for i in range(len(self.X))], update_w)
 
-    def run_with_random_cycle(self, is_exceed_max_update, update_w):
+    def run_with_random_cycle(self, update_w):
         """
             random cycle PLA
         """
@@ -72,7 +76,7 @@ class PLA():
         # set new seed
         random.seed(time.time())
         random_cycle = random.sample(range(x_len), x_len)
-        return self.__run(random_cycle, is_exceed_max_update, update_w)
+        return self.__run(random_cycle, update_w)
 
     @staticmethod
     def sign(num):
