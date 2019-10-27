@@ -27,6 +27,7 @@ class Q6(PLA):
 
         for i in range(repeated_times):
             super(Q6, self).run_with_random_cycle(is_exceed_max_update, self.__update_w_and_freqs_fn(i))
+            print('Round', i, ': update', self.__freqs[i], 'times')
 
         return self.__freqs
 

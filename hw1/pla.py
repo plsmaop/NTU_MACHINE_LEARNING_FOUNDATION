@@ -8,24 +8,27 @@ class PLA():
         """
             read input data from the given file path
         """
+        self.input_dimension = input_dimension
+        self.X, self.Y = self.load_data_from_file(file_path, input_dimension)
 
+    @staticmethod
+    def load_data_from_file(file_path, input_dimension):
         with open(file_path, 'r') as file:
             raw_data = file.readlines()
             data_num = len(raw_data)
 
-            self.input_dimension = input_dimension
-
             # add X0
-            self.X = np.zeros((data_num, input_dimension + 1))
-            self.Y = np.zeros(data_num)
+            X = np.zeros((data_num, input_dimension + 1))
+            Y = np.zeros(data_num)
             for ind, line in enumerate(raw_data):
                 # X0 = 1
-                self.X[ind, 0] = 1.0
+                X[ind, 0] = 1.0
 
                 elements = line.strip().split()
-                self.Y[ind] = int(elements[-1])
+                Y[ind] = int(elements[-1])
                 for i in range(1, input_dimension + 1):
-                    self.X[ind, i] = elements[i-1]
+                    X[ind, i] = elements[i-1]
+        return X, Y
 
     def __run(self, cycle, is_exceed_max_update, update_w):
         """
