@@ -21,15 +21,21 @@ class Q6(PLA):
             Q6
         """
 
+        def is_exceed_max_update(): return False
+
         self.__freqs = np.zeros(repeated_times)
 
         for i in range(repeated_times):
-            super(Q6, self).run_with_random_cycle(self.__update_w_and_freqs_fn(i))
+            super(Q6, self).run_with_random_cycle(is_exceed_max_update, self.__update_w_and_freqs_fn(i))
+            print('Round', i, ': update', self.__freqs[i], 'times')
 
         return self.__freqs
 
     def run_and_show_histogram(self, repeated_times):
-        h = self.__run(repeated_times)
-        print('Q6: average number of updates:', reduce(lambda x, y: x+y, h) / repeated_times)
-        plt.hist(h)
+        f = self.__run(repeated_times)
+        print('Q6: average number of updates:', reduce(lambda x, y: x+y, f) / repeated_times)
+        plt.hist(f)
+        plt.title('Number of Updates Versus Frequency')
+        plt.xlabel('Number of Updates')
+        plt.ylabel('Frequency')
         plt.show()
