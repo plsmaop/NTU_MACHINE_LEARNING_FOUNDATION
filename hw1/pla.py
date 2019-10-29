@@ -28,7 +28,7 @@ class PLA():
                 Y[ind] = int(elements[-1])
                 for i in range(1, input_dimension + 1):
                     X[ind, i] = elements[i-1]
-        return X, Y
+            return X, Y
 
     def __run(self, cycle, is_exceed_max_update, update_w):
         """
