@@ -32,7 +32,10 @@ class Q6(PLA):
         return self.__freqs
 
     def run_and_show_histogram(self, repeated_times):
-        h = self.__run(repeated_times)
-        print('Q6: average number of updates:', reduce(lambda x, y: x+y, h) / repeated_times)
-        plt.hist(h)
+        f = self.__run(repeated_times)
+        print('Q6: average number of updates:', reduce(lambda x, y: x+y, f) / repeated_times)
+        plt.hist(f)
+        plt.title('Number of Updates Versus Frequency')
+        plt.xlabel('Number of Updates')
+        plt.ylabel('Frequency')
         plt.show()

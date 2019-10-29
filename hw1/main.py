@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 from Q6 import Q6
 from Q7 import Q7
+from Q8 import Q8
 
 repeated_times = 1126
 q6_data = 'hw1_6_train.dat'
@@ -11,7 +12,10 @@ max_update_times = 100
 
 if __name__ == '__main__':
     q6 = Q6(q6_data, 4)
-    # q6.run_and_show_histogram(repeated_times)
+    q6.run_and_show_histogram(repeated_times)
 
     q7 = Q7(q7_data, q7_test, 4)
     q7.run_and_show_histogram(repeated_times, max_update_times)
+
+    q8 = Q8(q7_data, q7_test, 4)
+    q8.run_and_show_histogram(repeated_times, max_update_times)
