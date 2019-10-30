@@ -64,10 +64,12 @@ class Q7(PLA):
 
     @staticmethod
     def show_histogram(f):
+        # plt.hist(f, bins=[i/1000.0 for i in range(int(np.amin(f)*1000), int(np.amax(f)*1000)+1)])
         plt.hist(f)
         plt.title('Error Rate Versus Frequency')
         plt.xlabel('Error Rate')
         plt.ylabel('Frequency')
+        plt.grid(True)
         plt.show()
 
     def run_and_show_histogram(self, repeated_times, max_update_times):
