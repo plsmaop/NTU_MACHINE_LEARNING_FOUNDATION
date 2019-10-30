@@ -1,5 +1,8 @@
 # MACOSX
-*DS*
+*.DS_Store
 
 # python
 *__pycache__*
+
+# HW_PACK
+*r08922176*
