@@ -94,6 +94,6 @@ class DecisionStump():
 
         print('Ein:', np.mean(Ein), ',Eout:', np.mean(Eout))
         plt.hist(list(map(lambda ein, eout: ein - eout, Ein, Eout)))
-        plt.xlabel('E_i - Eout')
+        plt.xlabel('Ein - Eout')
         plt.title('Histogram')
         plt.show()
