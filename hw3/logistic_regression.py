@@ -55,8 +55,8 @@ class LogisticRegression():
         # plot
         plt.plot(range(len(Ein)), Ein, label='GD')
         plt.plot(range(len(sgd_Ein)), sgd_Ein, label='SGD')
-        plt.set_title(f'eta = {self.__eta}')
-        plt.set_ylabel('Ein')
+        plt.title(f'eta = {self.__eta}')
+        plt.ylabel('Ein')
         plt.xticks(np.arange(0, self.__turns - 1, 250))
         plt.legend()
         plt.show()
@@ -64,8 +64,8 @@ class LogisticRegression():
         # plot
         plt.plot(range(len(Eout)), Eout, label='GD')
         plt.plot(range(len(sgd_Eout)), sgd_Eout, label='SGD')
-        plt.set_title(f'eta = {self.__eta}')
-        plt.set_ylabel('Eout')
+        plt.title(f'eta = {self.__eta}')
+        plt.ylabel('Eout')
         plt.xticks(np.arange(0, self.__turns - 1, 250))
         plt.legend()
         plt.show()
